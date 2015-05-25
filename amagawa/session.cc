@@ -99,16 +99,12 @@ session::on_message(const msgpack::object& o)
 	o.convert(&header);
 
 	switch (header.type) {
-		case MSG_REQUEST:
+		case message_type::REQUEST:
 			on_request(o);
 			break;
 
-		case MSG_RESPONSE:
+		case message_type::RESPONSE:
 			on_response(o);
-			break;
-		
-		default:
-			// XXX
 			break;
 	}
 }

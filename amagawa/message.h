@@ -5,15 +5,13 @@
 namespace amagawa {
 
 using request_id_t = uint16_t;
-using msg_type_t = uint8_t;
 using method_id_t = uint8_t;
 
-static const msg_type_t MSG_REQUEST = 1;
-static const msg_type_t MSG_RESPONSE = 2;
+enum class message_type { REQUEST, RESPONSE };
 
 struct msg_header
 {
-	msg_type_t type;
+	message_type type;
 
 	MSGPACK_DEFINE(type);
 };
@@ -22,19 +20,19 @@ template <typename Param>
 struct msg_request
 {
 	msg_request()
-	: type(MSG_REQUEST)
+	: type(message_type::REQUEST)
 	, request_id(0)
 	, method_id(0)
 	{ }
 
 	msg_request(request_id_t request_id, method_id_t method_id, const Param& param)
-	: type(MSG_REQUEST)
+	: type(message_type::REQUEST)
 	, request_id(request_id)
 	, method_id(method_id)
 	, param(param)
 	{ }
 
-	msg_type_t type;
+	message_type type;
 	request_id_t request_id;
 	method_id_t method_id;
 	Param param;
@@ -46,17 +44,17 @@ template <typename Result>
 struct msg_response
 {
 	msg_response()
-	: type(MSG_RESPONSE)
+	: type(message_type::RESPONSE)
 	, request_id(0)
 	{ }
 
 	msg_response(request_id_t request_id, const Result& result)
-	: type(MSG_RESPONSE)
+	: type(message_type::RESPONSE)
 	, request_id(request_id)
 	, result(result)
 	{ }
 
-	msg_type_t type;
+	message_type type;
 	request_id_t request_id;
 	Result result;
 
@@ -64,3 +62,5 @@ struct msg_response
 };
 
 }
+
+MSGPACK_ADD_ENUM(amagawa::message_type);
