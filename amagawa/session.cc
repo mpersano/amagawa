@@ -4,10 +4,11 @@ namespace amagawa {
 
 session::session(socket_ptr_t socket, request_handler_t request_handler)
 : socket_(socket)
-, unpacker_(1024*1024)
 , last_request_id_(0)
 , request_handler_(request_handler)
-{ }
+{
+	unpacker_.reserve_buffer(1024*1024);
+}
 
 void
 session::start_read()
@@ -132,6 +133,8 @@ session::on_response(const msgpack::object& o)
 	}
 
 	it->second(m.result);
+
+	request_map_.erase(it);
 }
 
 }
